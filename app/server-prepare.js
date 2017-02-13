@@ -16,35 +16,31 @@ mongoose.connection.once('connected', () => {
     // Start operations (main)
     // ----------------------
     let promiseIndex = 1;
-    console.log('[promise '+promiseIndex+'] Addition of nodejs event loop data');
-    readNodeJsEventLoopFilePromise()
-        .then((id) => {
-            promiseIndex++;
-            console.log('[promise '+promiseIndex+'] Addition of readme data - after '+id+' added');
-            return readReadMeFilePromise();
-        })
-        .then( () => {
-            promiseIndex++;
-            console.log('[promise '+promiseIndex+'] Extraction of dictionary');
-            return readDictionaryPromise();
-        })
-        .then( (req) => {
-            promiseIndex++;
-            console.log('[promise '+promiseIndex+'] Extraction of session data - after '+req.previousPhase);
-            return readSessionPromise(req);
-        })
-        .then( (req) => {
-            promiseIndex++;
-            console.log('[promise '+promiseIndex+'] Aggregation of session data  - after '+req.previousPhase);
-            return sessionDataAggregationPromise(req);
-        })
-        .then( (req) => {  
-            promiseIndex++;          
-            console.log('[last promise] after '+req+' - the end');
-            mongoose.connection.close();            
-        }).catch( (err) => {
-            console.log(err);
-        });        
+    console.log('[promise '+promiseIndex+'] Addition of text files');
+    Promise.all([readNodeJsEventLoopFilePromise, readReadMeFilePromise])
+    .then( () => {
+        promiseIndex++;
+        console.log('[promise '+promiseIndex+'] Extraction of dictionary');
+        return readDictionaryPromise();
+    })
+    .then( (req) => {
+        promiseIndex++;
+        console.log('[promise '+promiseIndex+'] Extraction of session data - after '+req.previousPhase);
+        return readSessionPromise(req);
+    })
+    .then( (req) => {
+        promiseIndex++;
+        console.log('[promise '+promiseIndex+'] Aggregation of session data  - after '+req.previousPhase);
+        return sessionDataAggregationPromise(req);
+    })
+    .then( (req) => {  
+        promiseIndex++;          
+        console.log('[last promise] after '+req+' - the end');
+        mongoose.connection.close();            
+    })
+    .catch( (err) => {
+        console.log(err);
+    });        
 });
 
 // --------
